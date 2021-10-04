@@ -27,7 +27,7 @@ export class TasksController {
   }
 
   @Get('/:id')
-  getTaskById(@Param('id') id: string): Task {
+  getTask(@Param('id') id: string): Task {
     return this.tasksService.getTaskById(id);
   }
 
@@ -36,8 +36,6 @@ export class TasksController {
     @Param('id') taskId: string,
     @Body('status') taskStatus: TaskStatus,
   ) {
-    console.log(taskId);
-    console.log(taskStatus);
     return this.tasksService.updateTaskStatus(taskId, taskStatus);
   }
 
