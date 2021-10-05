@@ -9,9 +9,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { GetTaskDto } from './dto/get-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
-import { Task } from './task.model';
+import { Task } from './task.entity';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
@@ -19,34 +20,33 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  getTasks(@Query() filterDto: GetTasksFilterDto): Task[] {
-    if (Object.keys(filterDto).length) {
-      return this.tasksService.getTasksWithFilter(filterDto);
-    } else {
-      return this.tasksService.getAllTasks();
-    }
+  getTasks(@Query() filterDto: GetTasksFilterDto): Promise<Task[]> {
+    return this.tasksService.getTasks(filterDto);
   }
 
   @Get('/:id')
-  getTask(@Param('id') id: string): Task {
-    return this.tasksService.getTaskById(id);
-  }
-
-  @Patch('/:id/status')
-  updateTaskStatus(
-    @Param('id') taskId: string,
-    @Body() updateTaskStatusDto: UpdateTaskStatusDto,
-  ) {
-    return this.tasksService.updateTaskStatus(taskId, updateTaskStatusDto);
+  getTask(@Param('id') getTaskDto: GetTaskDto): Promise<Task> {
+    return this.tasksService.getTaskById(getTaskDto.id);
   }
 
   @Post()
-  createTask(@Body() createTaskDto: CreateTaskDto): Task {
+  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.createTask(createTaskDto);
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id') id: string): void {
-    this.tasksService.deleteTask(id);
+  deleteTask(@Param() getTaskDto: GetTaskDto): Promise<void> {
+    return this.tasksService.deleteTask(getTaskDto.id);
+  }
+
+  @Patch('/:id/status')
+  updateTaskStatus(
+    @Param() getTaskDto: GetTaskDto,
+    @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+  ): Promise<Task> {
+    return this.tasksService.updateTaskStatus(
+      getTaskDto.id,
+      updateTaskStatusDto.status,
+    );
   }
 }
