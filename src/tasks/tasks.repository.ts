@@ -19,7 +19,7 @@ export class TasksRepository extends Repository<Task> {
 
   async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
     const { status, search } = filterDto;
-    const query = this.createQueryBuilder('task');
+    const query = this.createQueryBuilder();
 
     if (status) {
       query.andWhere({ status: status });
@@ -31,6 +31,8 @@ export class TasksRepository extends Repository<Task> {
         { search: `%${search}%` },
       );
     }
+
+    console.log(query.getQuery());
 
     const tasks = await query.getMany();
     return tasks;
