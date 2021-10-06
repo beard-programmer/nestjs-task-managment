@@ -14,9 +14,7 @@ export class TasksService {
   ) {}
 
   async getTaskById(id: string, user: User): Promise<Task> {
-    const task = await this.tasksRepository.findOne({
-      where: { id, user },
-    });
+    const task = await this.tasksRepository.findOne({ id, user });
 
     if (task) {
       return task;
@@ -34,12 +32,7 @@ export class TasksService {
   }
 
   async deleteTask(id: string, user: User): Promise<void> {
-    const result = await this.tasksRepository
-      .createQueryBuilder('tasks')
-      .where('userId = :userId', { userId: user.id })
-      .andWhere({ id: id })
-      .delete()
-      .execute();
+    const result = await this.tasksRepository.delete({ id, user });
 
     if (1 <= result.affected) {
       return;
