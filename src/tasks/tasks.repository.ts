@@ -19,22 +19,20 @@ export class TasksRepository extends Repository<Task> {
     );
   }
 
-  async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
+  async getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
     const { status, search } = filterDto;
     const query = this.createQueryBuilder();
-
+    query.where({ user: user });
     if (status) {
       query.andWhere({ status: status });
     }
 
     if (search) {
       query.andWhere(
-        'task.title ILIKE :search OR task.description ILIKE :search',
+        '(task.title ILIKE :search OR task.description ILIKE :search)',
         { search: `%${search}%` },
       );
     }
-
-    console.log(query.getQuery());
 
     const tasks = await query.getMany();
     return tasks;
