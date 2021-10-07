@@ -8,6 +8,10 @@
 $ npm install
 ```
 
+## Dependencies
+
+This app uses postgresql as DB so make sure to have it installed.
+
 ## Running the app
 
 ```bash
